@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="x-ua-compatible" content="ie=edge,chrome=1">
+		<title>抽奖</title>
+		<script src="js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+	<style type="text/css">
+		body{
+			margin: 0;
+			padding: 0;
+		}
+		.award-body{
+			height: 100vh;
+			width: 100vw;
+			background: url(img/yearbg.jpg) no-repeat center center;
+			background-size: cover;
+			overflow: hidden;
+			position: relative;
+		}
+
+		.lucky{
+			position: absolute;
+			max-width: 750px;
+			max-height: 750px;
+			width: 39vw;
+			height: 39vw;
+			top: 0;
+			bottom: 0;
+			margin:  auto;
+			left: 11vw;
+		}
+
+		.info-detail{
+			position: absolute;
+			right:11vw;
+			bottom: 34vh;
+			color: #ffffff;
+			font-size: 20px;
+		}
+		.fff{
+			position: absolute;
+			top: 10px;
+			left:20px;
+			cursor: pointer;
+			color: #e9e9e9;
+		}
+		.pointer{
+            position: absolute;
+            width: 10vw;
+            height: 12vw;
+            top: 50%;
+            left: 50%;
+            transform: translate(-49%,-58%);
+            z-index: 2;
+            cursor: pointer;
+        }
+
+        .pointer img{
+        	max-width: 100%;
+        	max-height: 100%;
+        }
+        .rotate{
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+			height: 100%;
+
+        }
+
+        .rotate img{
+            width: 100%;
+            height: 100%;
+        }
+
+        .award{
+		    display: none;
+		       position: fixed;
+		       width: 580px;
+		       height: 300px;
+		       top: 0;
+		       bottom: 0;
+		       left: 0;
+		       right: 0;
+		       margin:auto;
+		       z-index: 1000;
+		   }
+
+		   .award-info{
+		           background-color: #fef2da;
+		           border-radius: 10px;
+		           padding: 10px 0;
+		   }
+		   .award-info h3{
+		   		text-align: center;
+               font-size: 18px;
+               color: #df344f;
+               margin-top: 10px;
+		   	}
+		.award-info h2{
+			text-align: center;
+			font-size: 40px;
+			color: #df344f;
+			margin-top: 10px;
+		}
+
+		   	.award-info h3 small{
+		   		display: block;
+                color: #82192f;
+		   	}
+		.award-info h2 small{
+			display: block;
+			color: #82192f;
+		}
+
+		   	.award-info h3 i{
+		   		font-style: normal;
+		   	}
+		.award-info h2 i{
+			font-style: normal;
+		}
+
+		   	.btn-default{
+		               display: block;
+		               width: 150px;
+		               background-color: #ffb400;
+		               color: #fc4061;
+		               margin: 25px auto;
+		               font-weight: bold;
+		               border: none;
+		               font-size: 20px;
+		               text-align: center;
+		               border-radius: 20px;
+		               padding: 8px 8px;
+		               cursor: pointer;
+		               outline: none;
+		           }
+
+		   .mask{
+			    position: fixed;
+			    left: 0;
+			    right: 0;
+			    top: 0;
+			    bottom: 0;
+			    background-color: #000;
+			    opacity: .7;
+			    z-index: 99;
+			    display: none;
+			}
+
+			.setPanel{
+				position: fixed;
+			       width: 350px;
+			       height: 400px;
+			       top: 0;
+			       bottom: 0;
+			       left: 0;
+			       right: 0;
+			       margin:auto;
+			       z-index: 1000;
+			       background-color: #fff;
+			       padding: 30px;
+			       border-radius: 20px;
+			       display: none;
+				overflow-y: auto;
+			}
+		.setPanel span{
+			display: block;
+		}
+			.setPanel input{
+				width: 30px;
+				margin:0 5px 0 10px;
+			}
+
+			.setPanel label{
+
+				margin: 5px 10px;
+				color: #666;
+			}
+
+			.tips{
+				color: #df344f;
+				margin-top: 10px;
+			}
+
+			.close{
+		position: absolute;
+		top: 5px;
+		right: 15px;
+		width: 30px;
+		height: 30px;
+		text-align: center;
+		line-height: 30px;
+		color: #000;
+		font-size: 20px;
+		z-index: 1;
+		cursor: pointer;
+		border-radius: 100%;
+	}
+
+	.btn{
+		position: absolute;
+		bottom:30px;
+		right: 110px;
+	}
+	</style>
+	<body>
+		<div class="award-body">
+			<div class="fff">
+				<span class="fullScreen" id="fullScreen">全屏</span>
+				<span class="exitFullScreen" id="exitFullScreen">退出全屏</span>
+			</div>
+			<div class="lucky">
+				<div class="pointer"><img src="./img/zhuan.png" alt="pointer"></div>
+				<div class="rotate"><img id="rotate" src="./img/yearPan_03.png" alt="turntable"></div>
+			</div>
+			<div class="info-detail">
+				<h2>第&nbsp&nbsp<i class="num_0">0</i>&nbsp&nbsp次抽奖</h2>
+				<p>
+					<label>一等奖:&nbsp<i class="yi0">0</i>&nbsp份&nbsp&nbsp剩余：<i class="yi_1">0</i>&nbsp份</label>
+				</p>
+				<p>
+					<label>二等奖:&nbsp<i class="er0">0</i>&nbsp份&nbsp&nbsp剩余：<i class="er_1">0</i>&nbsp份</label>
+				</p>
+				<p>
+					<label>三等奖:&nbsp<i class="san0">0</i>&nbsp份&nbsp&nbsp剩余：<i class="san_1">0</i>&nbsp份</label>
+				</p>
+			</div>
+			<button class="btn btn-default set">抽奖设置</button>
+		</div>
+		<div class="mask"></div>
+		<div class="award">
+			<div class="award-info">
+				<h3>恭喜您抽中</h3>
+				<h2><i>～</i><small>～</small></h2>
+				<div class="btn-default continue">继续抽奖</div>
+			</div>
+		</div>
+		<div class="setPanel">
+			<div class="close">X</div>
+			<div class="chance">
+				<h3>中奖概率</h3>
+				<span>
+					<label>一等奖<input type="text" value="5" />%</label>
+				</span>
+				<span>
+					<label>二等奖<input type="text" value="22" />%</label>
+				</span>
+				<span>
+					<label>三等奖<input type="text" value="73" />%</label>
+				</span>
+				<div class="tips">请填写整数数字，并且所有概率之和是100!</div>
+			</div>
+			<div class="prize">
+				<h3>中奖数量</h3>
+				<span>
+					<label>一等奖数量<input type="text" value="5" /> 余量：<i class="yi">5</i></label>
+				</span>
+				<span>
+					<label>二等奖数量<input type="text" value="20" /> 余量：<i class="er">20</i></label>
+				</span>
+				<span>
+					<label>三等奖数量<input type="text" value="70" /> 余量：<i class="san">70</i></label>
+				</span>
+
+				<label><input type="hidden" value="-1" /></label>
+				<div class="tips">请填写整数数字，奖品数量！</div>
+			</div>
+			<button class="btn-default comfirm" style="display: inline-block;margin-right: 20px;">确认</button>
+			<button class="btn-default clearData" style="display: inline-block;">清除数据</button>
+		</div>
+		<audio src="./img/rongshengmusic.mp3" style="width: 0px;height: 0px;" loop='loop' id="music01"></audio>
+	</body>
+	<script src="js/awardRotate.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		$(function() {
+			// 概率表
+			$("#exitFullScreen").css("display","none");
+			$("#fullScreen").css("display","");
+			var chance = localStorage.getItem('chance')&&localStorage.getItem('chance').split(',').map(v=>+v);
+			// 剩余奖品
+			var prizeNums = localStorage.getItem('prizeNums')&&localStorage.getItem('prizeNums').split(',').map(v=>+v);
+			var count = localStorage.getItem('count') || 0
+			var music = $('#music01')[0];
+			var timer = null
+			$('.num_0').text(count);
+			(function(){
+				if(chance&&prizeNums){
+					//设置余量
+					$('.yi').text(prizeNums[0]);
+					$('.er').text(prizeNums[1]);
+					$('.san').text(prizeNums[2]);
+					var cinputs = $('.chance input');
+					for(var i = 0;i<chance.length;i++){
+						cinputs.eq(i).val(chance[i]);
+					}
+					var pinputs = $('.prize input');
+					for(var i = 0;i<prizeNums.length-1;i++){
+						pinputs.eq(i).val(prizeNums[i]);
+					}
+					setPageNum()
+				}
+			})();
+			var bRotate = false;
+			var rotateFn = function(awards, angles, txt, name) {
+				bRotate = !bRotate;
+				$('#rotate').stopRotate();
+				$('#rotate').rotate({
+					angle: 0,
+					animateTo: angles + 2160,
+					duration: 5400,
+					callback: function() {
+						music.pause();
+						var info = localStorage.getItem('awardInfo').split(',').map(function(v){
+							return +v;
+						});
+						info[awards]++;
+						localStorage.awardInfo = info;
+						if(--prizeNums[awards] === 0){
+							chance[chance.length-1] += chance[awards];
+							chance[awards] = 0;
+						}
+						localStorage.setItem('awardInfo',info);
+						localStorage.setItem('chance',chance);
+						localStorage.setItem('prizeNums',prizeNums);
+						$('.yi').text(prizeNums[0]);
+						$('.er').text(prizeNums[1]);
+						var me = $('.award-info');
+						$('h2 i', me).text(txt);
+						$('h2 small', me).text(name);
+						showMask();
+						setPageNum();
+						$('.award').show();
+						timer = setTimeout(()=>{
+							hids();
+						},1500)
+
+					}
+				})
+			};
+			$('.pointer').click(function() {
+				if(!chance||!prizeNums) {
+					alert('请点击右下角，先设置抽奖信息！');
+					return;
+				}
+				if(bRotate) return;
+				music.play();
+				var nth = randonAward();
+				++count
+				localStorage.setItem('count',count);
+				$('.num_0').text(count);
+				if(nth < 0){
+					prizeNums.forEach((item,index) => {
+						if(item > 0){
+							nth = index
+						}
+					})
+				}
+				var deg = Math.random()*10>>0 >= 5 ? -60*nth : -60*nth-180;
+				// console.log(`deg:${nth}`,deg)
+				switch(nth) {
+					case 0:
+						rotateFn(0, deg , '一等奖', '');
+						break;
+					case 1:
+						rotateFn(1, deg, '二等奖', '');
+						break;
+					case 2:
+						rotateFn(2, deg, '三等奖', '');
+						break;
+					default:
+						alert('已经没有可以抽取的奖项！');
+				}
+			});
+
+			$(".fullScreen").on("click",function(){
+				fullScreen();
+				$("#exitFullScreen").css("display","");
+				$("#fullScreen").css("display","none");
+			})
+
+			$(".exitFullScreen").on("click",function(){
+				exitFullscreen();
+				$("#exitFullScreen").css("display","none");
+				$("#fullScreen").css("display","");
+			})
+
+
+			/**
+			 * 页面显示
+			 */
+			function setPageNum(){
+				var prizeNs = prizeNums
+				$('.yi_1').text(prizeNs[0]);
+				$('.er_1').text(prizeNs[1]);
+				$('.san_1').text(prizeNs[2]);
+
+				$('.yi').text(prizeNs[0]);
+				$('.er').text(prizeNs[1]);
+				$('.san').text(prizeNs[2]);
+				let old = localStorage.getItem('awardInfoBackup');
+				old = old.split(',')
+				$('.yi0').text(old[0]);
+				$('.er0').text(old[1]);
+				$('.san0').text(old[2]);
+			}
+
+
+			function randonAward(){
+				var r = Math.random()*99+1>>0;
+				for(var i = 0,sum = 0;i<chance.length;i++){
+					sum += chance[i];
+					if(r<=sum) return i;
+				}
+				return -1;
+			}
+
+			 function showMask(){
+				$('.mask').show();
+			}
+
+			function hideMask(){
+				$('.mask').hide();
+			}
+
+			 $('.continue').click(function(){
+				 hids()
+				 timer && window.clearTimeout(timer)
+			 })
+
+			function hids(){
+				$('.award').hide();
+				hideMask();
+				bRotate = !bRotate;
+			}
+
+			function fullScreen() {
+				var element = document.documentElement;
+				if (element.requestFullscreen) {
+					element.requestFullscreen();
+				} else if (element.msRequestFullscreen) {
+					element.msRequestFullscreen();
+				} else if (element.mozRequestFullScreen) {
+					element.mozRequestFullScreen();
+				} else if (element.webkitRequestFullscreen) {
+					element.webkitRequestFullscreen();
+				}
+			}
+
+			function exitFullscreen() {
+				if (document.exitFullscreen) {
+					document.exitFullscreen();
+				} else if (document.msExitFullscreen) {
+					document.msExitFullscreen();
+				} else if (document.mozCancelFullScreen) {
+					document.mozCancelFullScreen();
+				} else if (document.webkitExitFullscreen) {
+					document.webkitExitFullscreen();
+				}
+			}
+
+		 	$('.close').click(function(){
+				$('.setPanel').hide();
+				hideMask();
+			});
+
+			$('.set').click(function(){
+				$('.setPanel').show();
+				showMask();
+			})
+
+			$('.comfirm').click(function(){
+				var temp = [];
+				var sum = 0
+				var canSet = true;
+				$('.chance label input').each(function(){
+					var p = $(this).val();
+					if(p == ''){
+						canSet = false;
+					}
+					sum += parseInt(p || 0)
+					temp.push(+p);
+				})
+				// console.log('sum:',sum)
+				if(sum != 100){
+					alert('中奖概率之和必须为100');
+					return false
+				}
+				var temp2= [];
+				$('.prize label input').each(function(){
+					var p = $(this).val();
+					if(p == ''){
+						canSet = false;
+					}
+					temp2.push(+p);
+				})
+				if(canSet){
+					localStorage.setItem('count',0);
+					localStorage.setItem('awardInfo',[0,0,0]);
+					localStorage.setItem('awardInfoBackup',temp2);
+					localStorage.setItem('chance',temp);
+					localStorage.setItem('prizeNums',temp2);
+					window.location.reload();
+				}else{
+					alert('请填写完整的数据！');
+				}
+			})
+			//监听window是否全屏，并进行相应的操作,支持esc键退出
+			window.onresize = function() {
+				var isFull=!!(document.webkitIsFullScreen || document.mozFullScreen ||
+						document.msFullscreenElement || document.fullscreenElement
+				);//!document.webkitIsFullScreen都为true。因此用!!
+				if (isFull==false) {
+					$("#exitFullScreen").css("display","none");
+					$("#fullScreen").css("display","");
+				}else{
+					$("#exitFullScreen").css("display","");
+					$("#fullScreen").css("display","none");
+				}
+			}
+
+			$('.clearData').click(function(){
+				$('.setPanel input:visible').val('');
+				localStorage.removeItem('count');
+				localStorage.removeItem('awardInfo');
+				localStorage.removeItem('awardInfoBackup');
+				localStorage.removeItem('chance');
+				localStorage.removeItem('prizeNums');
+				window.location.reload();
+			})
+
+			$(window).on('keydown',function(e){
+				// if(e.keyCode == '17'){
+				// 	$('.set').trigger('click');
+				// }
+				if(e.keyCode == '13'){
+					$('.pointer').trigger('click');
+				}
+			})
+		});
+	</script>
+
+</html>
